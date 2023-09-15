@@ -6,8 +6,6 @@
 
 #include <WiFi.h>
 #include "TFT_eSPI.h" // Include the graphics library
-#include <FS.h>
-#include "SPIFFS.h" // TFT_eSPI screen capture 
 
 #define SCAN_TIME 20 // Time in seconds to perform WiFi scan
 #define COL1_WIDTH 160 // Adjust this value based on your screen requirements
@@ -30,73 +28,9 @@ uint16_t getColorBasedOnRSSI(int32_t rssi) {
   }
 }
 
-void saveScreenshot(String filename) {
-  File bmpfile = SPIFFS.open(filename, "w");
-  if (!bmpfile) {
-    Serial.println("There was an error opening the file for writing");
-    return;
-  }
-
-  // Bitmap file header
-  uint8_t bmpFileHeader[14] = {
-    'B', 'M', // magic number
-    0, 0, 0, 0, // size in bytes (will be filled later)
-    0, 0, // app data
-    0, 0, // app data
-    40 + 14, 0, 0, 0 // start of data offset
-  };
-
-  // Bitmap info header
-  uint8_t bmpInfoHeader[40] = {
-    40, 0, 0, 0, // info hdr size
-    0, 0, 0, 0, // width (will be filled later)
-    0, 0, 0, 0, // height (will be filled later)
-    1, 0, // number color planes
-    16, 0, // bits per pixel
-    0, 0, 0, 0, // compression is none
-    0, 0, 0, 0, // image bits size
-    0x13, 0x0B, 0, 0, // horz resolution in pixel / m
-    0x13, 0x0B, 0, 0, // vert resolutions (0x03C3 = 96 dpi, 0x0B13 = 72 dpi)
-    0, 0, 0, 0, // #colors in palette
-    0, 0, 0, 0, // #important colors
-  };
-
-  // Write data to info header
-  bmpInfoHeader[4] = (uint8_t)(tft.width() & 0xFF);
-  bmpInfoHeader[5] = (uint8_t)((tft.width() >> 8) & 0xFF);
-  bmpInfoHeader[6] = (uint8_t)((tft.width() >> 16) & 0xFF);
-  bmpInfoHeader[7] = (uint8_t)((tft.width() >> 24) & 0xFF);
-
-  bmpInfoHeader[8] = (uint8_t)(tft.height() & 0xFF);
-  bmpInfoHeader[9] = (uint8_t)((tft.height() >> 8) & 0xFF);
-  bmpInfoHeader[10] = (uint8_t)((tft.height() >> 16) & 0xFF);
-  bmpInfoHeader[11] = (uint8_t)((tft.height() >> 24) & 0xFF);
-
-  // Write headers to file
-  bmpfile.write(bmpFileHeader, 14);
-  bmpfile.write(bmpInfoHeader, 40);
-
-  // Write pixel data to file
-  for (int y = tft.height() - 1; y >= 0; y--) {
-    for (int x = 0; x < tft.width(); x++) {
-      uint16_t color = tft.readPixel(x, y);
-      bmpfile.write((uint8_t)(color & 0xFF));
-      bmpfile.write((uint8_t)((color >> 8) & 0xFF));
-    }
-  }
-
-  bmpfile.close();
-}
-
 void setup() {
   // Initialize serial communication
   Serial.begin(115200);
-
-  // SPIFFS - for screenshots
-  if (!SPIFFS.begin(true)) {
-    Serial.println("An error has occurred while mounting SPIFFS");
-    return;
-  }
 
   // Input buttons for debug testing
   pinMode(BUTTON1_PIN, INPUT);
