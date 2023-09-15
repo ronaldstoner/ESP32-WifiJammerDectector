@@ -7,13 +7,13 @@ Although this device primarily functions as a basic "WiFi Scanner," its underlyi
 
 # Screenshots
 ## WiFi SSID Site Survey
-<img src="https://github.com/ronaldstoner/ESP32-WifiJammerDectector/blob/main/img/main.jpg?raw=true" align="center" /> 
-
-## Channel Layout
 <img src="https://github.com/ronaldstoner/ESP32-WifiJammerDectector/blob/main/img/screen1.jpg?raw=true" align="center" /> 
 
-## No Signal / Jammer May Be Present
+## Channel Layout
 <img src="https://github.com/ronaldstoner/ESP32-WifiJammerDectector/blob/main/img/screen2.jpg?raw=true" align="center" /> 
+
+## No Signal / Jammer May Be Present
+<img src="https://github.com/ronaldstoner/ESP32-WifiJammerDectector/blob/main/img/alert.jpg?raw=true" align="center" /> 
 
  	
 # Install
